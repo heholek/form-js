@@ -37,35 +37,69 @@ export default class FormEditorCore {
   }
 
   addField(targetField, targetIndex, field) {
-    const fields = arrayAdd(targetField.components, targetIndex, field);
+    let schema = clone(this.state.schema);
 
-    const schema = set(this.state.schema, [ ...targetField.schemaPath, 'components' ], fields);
+    const targetSchemaPath = [ ...targetField.schemaPath, 'components' ];
+
+    schema = set(
+      schema,
+      targetSchemaPath,
+      arrayAdd(get(schema, targetSchemaPath), targetIndex, field)
+    );
+
+    field.parent = targetField.id;
 
     this.setState({ schema });
   }
 
   moveField(sourceField, targetField, sourceIndex, targetIndex) {
-    let schema;
+    let schema = clone(this.state.schema);
+
+    const sourceSchemaPath = [ ...sourceField.schemaPath, 'components' ];
 
     if (sourceField.id === targetField.id) {
       if (sourceIndex < targetIndex) {
         targetIndex--;
       }
 
-      const fields = arrayMove(sourceField.components, sourceIndex, targetIndex);
-
-      schema = set(this.state.schema, [ ...sourceField.schemaPath, 'components' ], fields);
+      schema = set(
+        schema,
+        sourceSchemaPath,
+        arrayMove(get(schema, sourceSchemaPath), sourceIndex, targetIndex)
+      );
     } else {
-      throw new Error('Moving form field between containers not supported');
+      const field = get(schema, sourceSchemaPath)[ sourceIndex ];
+
+      schema = set(
+        schema,
+        sourceSchemaPath,
+        arrayRemove(get(schema, sourceSchemaPath), sourceIndex)
+      );
+
+      const targetSchemaPath = [ ...targetField.schemaPath, 'components' ];
+      
+      schema = set(
+        schema,
+        targetSchemaPath,
+        arrayAdd(get(schema, targetSchemaPath), targetIndex, field)
+      );
+
+      field.parent = targetField.id;
     }
 
     this.setState({ schema });
   }
 
   removeField(sourceField, sourceIndex) {
-    const fields = arrayRemove(sourceField.components, sourceIndex);
+    let schema = clone(this.state.schema);
 
-    const schema = set(this.state.schema, [ ...sourceField.schemaPath, 'components' ], fields);
+    const sourceSchemaPath = [ ...sourceField.schemaPath, 'components' ];
+
+    schema = set(
+      schema,
+      sourceSchemaPath,
+      arrayRemove(get(schema, sourceSchemaPath), sourceIndex)
+    );
 
     this.setState({ schema });
   }
@@ -128,4 +162,22 @@ function arrayRemove(array, index) {
   copy.splice(index, 1);
 
   return copy;
+}
+
+// TODO(philippfromme): add get function to min-dash
+function get(target, path, defaultValue) {
+  function _get(target, path) {
+    var index = 0,
+        length = path.length;
+
+    while (target != null && index < length) {
+      target = target[ path[ index++ ] ];
+    }
+
+    return (index && index == length) ? target : undefined;
+  }
+
+  var result = target == null ? undefined : _get(target, path);
+
+  return result === undefined ? defaultValue : result;
 }

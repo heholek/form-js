@@ -31,9 +31,15 @@
   min-height: 100px;
 }
 
+.fjs-editor .container .container {
+  border: dashed 2px var(--color-silver-darken-80);
+  border-radius: 3px;
+}
+
 .fjs-editor .element {
   /* background: rgba(0, 128, 255, .3); */
   margin: 5px;
+  height: 100%;
 }
 
 .container > .element {
@@ -56,7 +62,7 @@
 }
 
 .palette-field {
-  padding: 5px 10px;
+  padding: 10px;
   display: flex;
   white-space: pre;
   justify-content: flex-start;
@@ -64,6 +70,7 @@
   flex-direction: row;
   border-bottom: solid 1px var(--color-silver-darken-80);
   background-color: var(--color-silver-darken-94);
+  font-size: 14px;
 }
 
 .palette-field-icon {
@@ -87,6 +94,12 @@
   right: 0;
 }
 
+.fjs-empty {
+  flex-grow: 1;
+  background-color: fuchsia;
+}
+
+/* Custom Dragula Styles */
 .gu-transit {
   border-radius: 3px !important;
   padding: 0 !important;

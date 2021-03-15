@@ -2,7 +2,13 @@ import Description from './Description';
 import Errors from './Errors';
 import Label from './Label';
 
-export default function Checkbox(props) {
+import {
+  generateIdForType,
+  idToLabel
+} from '../../util';
+
+
+export default function CheckboxRenderer(props) {
   const {
     dataPath,
     disabled,
@@ -31,10 +37,19 @@ export default function Checkbox(props) {
   </div>;
 }
 
-Checkbox.create = function(options = {}) {
+CheckboxRenderer.create = function(options = {}) {
+  const type = 'checkbox';
+
+  const id = generateIdForType(type);
+
   return {
-    label: 'Checkbox',
-    type: 'checkbox',
+    type,
+    id,
+    label: idToLabel(id),
     ...options
   };
 };
+
+CheckboxRenderer.type = 'checkbox';
+
+CheckboxRenderer.label = 'Checkbox';

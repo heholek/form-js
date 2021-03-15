@@ -2,7 +2,13 @@ import Description from './Description';
 import Errors from './Errors';
 import Label from './Label';
 
-export default function Textfield(props) {
+import {
+  generateIdForType,
+  idToLabel
+} from '../../util';
+
+
+export default function TextfieldRenderer(props) {
   const {
     dataPath,
     disabled,
@@ -31,10 +37,19 @@ export default function Textfield(props) {
   </div>;
 }
 
-Textfield.create = function(options = {}) {
+TextfieldRenderer.create = function(options = {}) {
+  const type = 'textfield';
+
+  const id = generateIdForType(type);
+
   return {
-    label: 'Text Field',
-    type: 'textfield',
+    type,
+    id,
+    label: idToLabel(id),
     ...options
   };
 };
+
+TextfieldRenderer.type = 'textfield';
+
+TextfieldRenderer.label = 'Textfield';

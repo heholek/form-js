@@ -1,4 +1,10 @@
-export default function Button(props) {
+import {
+  generateIdForType,
+  idToLabel
+} from '../../util';
+
+
+export default function ButtonRenderer(props) {
   const {
     disabled,
     field
@@ -11,10 +17,19 @@ export default function Button(props) {
   </div>;
 }
 
-Button.create = function(options = {}) {
+ButtonRenderer.create = function(options = {}) {
+  const type = 'button';
+
+  const id = generateIdForType(type);
+
   return {
-    label: 'Button',
-    type: 'button',
+    type,
+    id,
+    label: idToLabel(id),
     ...options
   };
 };
+
+ButtonRenderer.type = 'button';
+
+ButtonRenderer.label = 'Button';

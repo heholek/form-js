@@ -4,9 +4,16 @@ import FormElement from '../FormElement';
 
 import { FormRenderContext } from '../context';
 
-export default function Default(props) {
+import {
+  generateIdForType,
+  idToLabel
+} from '../../util';
+
+
+export default function DefaultRenderer(props) {
   const {
-    Children
+    Children,
+    Empty
   } = useContext(FormRenderContext);
 
   let {
@@ -35,12 +42,26 @@ export default function Default(props) {
           field={ field } />;
       })
     }
+    {
+      components.length ? null : <Empty />
+    }
   </Children>;
 }
 
-Default.create = function(options = {}) {
+DefaultRenderer.create = function(options = {}) {
+  const type = 'default';
+  
+  const id = generateIdForType(type);
+
   return {
-    type: 'default',
+    type,
+    id,
+    label: idToLabel(id),
+    components: [],
     ...options
   };
 };
+
+DefaultRenderer.type = 'default';
+
+DefaultRenderer.label = 'Default';

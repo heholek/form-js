@@ -4,8 +4,7 @@ import { useContext, useState, useEffect, useCallback } from 'preact/hooks';
 import {
   FormContext,
   FormRenderContext,
-  Form,
-  generateIdForType
+  Form
 } from '@bpmn-io/form-js-viewer';
 
 import {
@@ -18,8 +17,8 @@ import * as dragula from 'dragula';
 
 
 function Palette(props) {
-  const fieldRenderers = props.fieldRenderers.filter(({ create }) => {
-    return create && ['button', 'textfield'].includes(create().type);
+  const fieldRenderers = props.fieldRenderers.filter((fieldRenderer) => {
+    return fieldRenderer.type !== 'default';
   });
 
   return <Fragment>
@@ -27,11 +26,7 @@ function Palette(props) {
     <div class="palette drag-container">
       {
         fieldRenderers.map((fieldRenderer) => {
-          const {
-            label,
-            icon,
-            type
-          } = fieldRenderer.create();
+          const { type, label, icon } = fieldRenderer;
 
           return (
             <div class="palette-field drag-copy no-drop" data-field-type={ type }>
@@ -52,6 +47,10 @@ const PropertiesPanel = (props) => {
 
   return <pre>{ JSON.stringify(field, null, 2) }</pre>;
 };
+
+function Empty(props) {
+  return null;
+}
 
 function Element(props) {
   const { selection, setSelection } = useContext(SelectionContext);
@@ -169,13 +168,8 @@ export default function FormEditor(props) {
 
         const fieldRenderer = getFieldRenderer(type);
 
-        const id = generateIdForType(type);
-
         const field = fieldRenderer.create({
-          id,
-          parent: targetField.id,
-          key: id,
-          label: capitalize(id)
+          parent: targetField.id
         });
 
         addField(targetField, targetIndex, field);
@@ -196,7 +190,8 @@ export default function FormEditor(props) {
 
   const formRenderContext = {
     Children,
-    Element
+    Element,
+    Empty
   };
 
   const formContext = {
@@ -255,8 +250,4 @@ function getFieldIndex(targetField, field) {
   });
 
   return targetIndex;
-}
-
-function capitalize(string) {
-  return string.replace(/^\w/, (c) => c.toUpperCase());
 }

@@ -2,7 +2,13 @@ import Description from './Description';
 import Errors from './Errors';
 import Label from './Label';
 
-export default function Number(props) {
+import {
+  generateIdForType,
+  idToLabel
+} from '../../util';
+
+
+export default function NumberRenderer(props) {
   const {
     dataPath,
     disabled,
@@ -31,10 +37,19 @@ export default function Number(props) {
   </div>;
 }
 
-Number.create = function(options = {}) {
+NumberRenderer.create = function(options = {}) {
+  const type = 'number';
+
+  const id = generateIdForType(type);
+
   return {
-    label : 'Number',
-    type: 'number',
+    type,
+    id,
+    label: idToLabel(id),
     ...options
   };
 };
+
+NumberRenderer.type = 'number';
+
+NumberRenderer.label = 'Number';
