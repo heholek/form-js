@@ -1,4 +1,3 @@
-import { Fragment } from 'preact';
 import { useContext, useState, useEffect, useCallback } from 'preact/hooks';
 
 import {
@@ -13,6 +12,9 @@ import {
   SelectionContext
 } from './context';
 
+import Palette from './Palette';
+import PropertiesPanel from './PropertiesPanel';
+
 import * as dragula from 'dragula';
 
 const removeSvg = `<?xml version="1.0" encoding="UTF-8"?>
@@ -23,39 +25,6 @@ const removeSvg = `<?xml version="1.0" encoding="UTF-8"?>
 </g>
 </g>
 </svg>`;
-
-
-function Palette(props) {
-  const fieldRenderers = props.fieldRenderers.filter((fieldRenderer) => {
-    return fieldRenderer.type !== 'default';
-  });
-
-  return <Fragment>
-    <div class="palette-header">FORM ELEMENTS LIBRARY</div>
-    <div class="palette drag-container">
-      {
-        fieldRenderers.map((fieldRenderer) => {
-          const { type, label, icon } = fieldRenderer;
-
-          return (
-            <div class="palette-field drag-copy no-drop" data-field-type={ type }>
-              {
-                icon ? <img class="palette-field-icon" src={ icon } /> : null
-              }
-              <span>{ label }</span>
-            </div>
-          );
-        })
-      }
-    </div>
-  </Fragment>;
-}
-
-const PropertiesPanel = (props) => {
-  const { field = {} } = props;
-
-  return <pre>{ JSON.stringify(field, null, 2) }</pre>;
-};
 
 function ContextPad(props) {
   if (!props.children) {
@@ -164,14 +133,32 @@ export default function FormEditor(props) {
     getFieldRenderer,
     fieldRenderers,
     addField,
-    moveField
+    moveField,
+    editField
   } = useContext(FormEditorContext);
 
   const { schema } = props;
 
   const [ selection, setSelection ] = useState(null);
 
-  const selectedField = fields.get(selection);
+  // TODO: This is a dirty hack.
+  // When editing a field the field registration will update AFTER we get the it from the
+  // field registry, to work around this issue we need to find the field in the schema instead.
+  // It's like having an asynchronous element registry which makes no sense.
+  let selectedField;
+
+  if (selection) {
+    const { schemaPath } = fields.get(selection);
+
+    // The information we need is both in the schema and in the field registration
+
+    // Having a properly imported and maintained structure (with $parent relationships) would allow us
+    // to get the up-to-date path at any point
+    selectedField = {
+      ...get(schema, schemaPath),
+      schemaPath
+    };
+  }
 
   const dragAndDropContext = {
     drake
@@ -261,7 +248,7 @@ export default function FormEditor(props) {
       </DragAndDropContext.Provider>
 
       <div class="properties-container">
-        <PropertiesPanel field={ selectedField } />
+        <PropertiesPanel field={ selectedField } editField={ editField }/>
       </div>
     </div>
   );
@@ -277,4 +264,22 @@ function getFieldIndex(targetField, field) {
   });
 
   return targetIndex;
+}
+
+// TODO(philippfromme): add get function to min-dash
+function get(target, path, defaultValue) {
+  function _get(target, path) {
+    var index = 0,
+        length = path.length;
+
+    while (target != null && index < length) {
+      target = target[ path[ index++ ] ];
+    }
+
+    return (index && index == length) ? target : undefined;
+  }
+
+  var result = target == null ? undefined : _get(target, path);
+
+  return result === undefined ? defaultValue : result;
 }

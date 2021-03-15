@@ -104,7 +104,19 @@ export default class FormEditorCore {
     this.setState({ schema });
   }
 
-  editFormField() {}
+  editField(field, key, value) {
+    let schema = clone(this.state.schema);
+
+    const path = [ ...field.schemaPath, key ];
+
+    schema = set(
+      schema,
+      path,
+      value
+    );
+
+    this.setState({ schema });
+  }
 
   reset() {
     this.setState({

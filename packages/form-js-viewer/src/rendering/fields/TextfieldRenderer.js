@@ -52,4 +52,4 @@ TextfieldRenderer.create = function(options = {}) {
 
 TextfieldRenderer.type = 'textfield';
 
-TextfieldRenderer.label = 'Textfield';
+TextfieldRenderer.label = 'Text Field';
