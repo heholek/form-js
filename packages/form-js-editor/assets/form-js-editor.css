@@ -88,11 +88,27 @@
   background-color: rgba(0, 128, 255, .6);
 }
 
-.fjs-editor-remove {
+.fjs-context-pad {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 3px;
+  right: 3px;
+  background-color: white;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px 1px rgb(0 0 0 / 10%);
 }
+
+.fjs-context-pad-item {
+  border: none;
+  background-color: white;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.fjs-context-pad-item img {
+  width: 18px;
+}
+
 
 .fjs-empty {
   flex-grow: 1;
