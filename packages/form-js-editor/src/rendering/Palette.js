@@ -1,22 +1,26 @@
 import { Fragment } from 'preact';
 
+import TextfieldIcon from './icons/Textfield.svg';
+
+const types = [
+  {
+    Icon: TextfieldIcon,
+    label: 'Text Field',
+    type: 'textfield'
+  }
+];
+
 
 export default function Palette(props) {
-  const fieldRenderers = props.fieldRenderers.filter((fieldRenderer) => {
-    return fieldRenderer.type !== 'default';
-  });
-
   return <Fragment>
     <div class="palette-header">FORM ELEMENTS LIBRARY</div>
     <div class="palette drag-container">
       {
-        fieldRenderers.map((fieldRenderer) => {
-          const { type, label, icon } = fieldRenderer;
-
+        types.map(({ Icon, label, type }) => {
           return (
             <div class="palette-field drag-copy no-drop" data-field-type={ type }>
               {
-                icon ? <img class="palette-field-icon" src={ icon } /> : null
+                Icon ? <Icon class="palette-field-icon" /> : null
               }
               <span>{ label }</span>
             </div>

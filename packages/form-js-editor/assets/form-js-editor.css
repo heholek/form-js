@@ -126,6 +126,8 @@
 }
 
 .gu-mirror {
-  opacity: 1;
-  filter: none;
+  opacity: 1 !important;
+  filter: none !important;
+
+  background-color: fuchsia !important;
 }

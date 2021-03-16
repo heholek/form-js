@@ -1,4 +1,10 @@
-import { useContext, useState, useEffect, useCallback } from 'preact/hooks';
+import { render } from 'preact';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'preact/hooks';
 
 import {
   FormContext,
@@ -18,6 +24,8 @@ import PropertiesPanel from './PropertiesPanel';
 import * as dragula from 'dragula';
 
 import RemoveIcon from './icons/Remove.svg';
+
+import { iconsByType } from './icons';
 
 function ContextPad(props) {
   if (!props.children) {
@@ -238,6 +246,7 @@ export default function FormEditor(props) {
           </FormContext.Provider>
 
         </div>
+        <CreatePreview />
       </DragAndDropContext.Provider>
 
       <div class="properties-container">
@@ -275,4 +284,32 @@ function get(target, path, defaultValue) {
   var result = target == null ? undefined : _get(target, path);
 
   return result === undefined ? defaultValue : result;
+}
+
+function CreatePreview(props) {
+
+  const { drake } = useContext(DragAndDropContext);
+
+  function handleCloned(clone, original, type) {
+
+    const fieldType = clone.dataset.fieldType;
+
+    const Icon = iconsByType[ fieldType ];
+
+    if (fieldType) {
+      clone.innerHTML = '';
+
+      clone.class = 'gu-mirror';
+
+      render(< Icon/>, clone);
+    }
+  }
+
+  useEffect(() => {
+    drake.on('cloned', handleCloned);
+
+    return () => drake.off('cloned', handleCloned);
+  }, []);
+
+  return null;
 }
